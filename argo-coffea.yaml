@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  generateName: poet-test-
+  generateName: coffea-test-
 spec:
   entrypoint: argo-coffea
   volumes:
