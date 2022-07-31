@@ -34,10 +34,22 @@ spec:
           - name: filelist
             dependencies: [prepare]
             template: filelist-template
+            arguments:
+              parameters:
+                - name: nFiles
+                  value: "{{inputs.parameters.nFiles}}"
+                - name: nSteps
+                  value: "{{inputs.parameters.nSteps}}"
+                - name: recid
+                  value: "{{input.parameters.recid}}"
 
           - name: runpoet
             dependencies: [filelist]
             template: runpoet-template
+            arguments:
+              parameters:
+                - name: message
+                  value: "{{inputs.parameters.message}}"
 
     # prepare the data directories needed in the workflow steps
     - name: prepare-template
