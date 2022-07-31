@@ -75,12 +75,10 @@ spec:
         image: cernopendata/cernopendata-client
         command: [bash]
         source: |
-          recid="{{inputs.parameters.recid}}"
-          echo $recid
           cernopendata-client get-file-locations --recid "{{inputs.parameters.recid}}" --protocol xrootd > /mnt/vol/files_{{inputs.parameters.recid}}.txt;
           nFiles="{{inputs.parameters.nFiles}}"
           echo $nFiles
-          head -$nFiles /mnt/vol/files_{{inputs.parameters.recid}}.txt > cat /mnt/vol/data/step_files_{{inputs.parameters.recid}}.txt
+          head -$nFiles /mnt/vol/files_{{inputs.parameters.recid}}.txt > /mnt/vol/data/step_files_{{inputs.parameters.recid}}.txt
           echo Selected files:
           cat /mnt/vol/data/step_files_{{inputs.parameters.recid}}.txt
         volumeMounts:
