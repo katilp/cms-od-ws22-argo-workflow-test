@@ -14,8 +14,6 @@ spec:
         value: 10
       - name: nSteps
         value: 1
-      - name: message
-        value: "I am in this step"
       - name: recid
         value: 24119
   templates:
@@ -48,8 +46,10 @@ spec:
             template: runpoet-template
             arguments:
               parameters:
-                - name: message
-                  value: "{{inputs.parameters.message}}"
+                - name: nFiles
+                  value: "{{inputs.parameters.nFiles}}"
+                - name: recid
+                  value: "{{inputs.parameters.recid}}" 
 
     # prepare the data directories needed in the workflow steps
     - name: prepare-template
@@ -89,10 +89,20 @@ spec:
     - name: runpoet-template
       inputs:
         parameters:
-        - name: message
+        - name: recid
+        - name: nFiles
+        - name: recid
       script:
-        image: alpine:3.7
-        command: [echo, "{{inputs.parameters.message}}"]
+        image: cmsopendata/cmssw_7_6_7-slc6_amd64_gcc493
+        command: [bash]
+        source: |
+          sudo chown $USER /mnt/vol
+          source /opt/cms/entrypoint.sh
+          git clone -b odws2022-ttbaljets-prod https://github.com/cms-opendata-analyses/PhysObjectExtractorTool.git
+          cd PhysObjectExtractorTool/PhysObjectExtractor
+          scram b
+          cmsRun python/poet_cfg.py True "{{inputs.parameters.nFiles}}"" 1 /mnt/vol/files_{{inputs.parameters.recid}}.txt
+          mv myoutput.root /mnt/vol/output_{{inputs.parameters.recid}}.root
         volumeMounts:
         - name: task-pv-storage
           mountPath: /mnt/vol
