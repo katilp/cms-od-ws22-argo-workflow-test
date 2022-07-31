@@ -90,7 +90,6 @@ spec:
         parameters:
         - name: recid
         - name: nFiles
-        - name: recid
       script:
         image: cmsopendata/cmssw_7_6_7-slc6_amd64_gcc493
         command: [bash]
