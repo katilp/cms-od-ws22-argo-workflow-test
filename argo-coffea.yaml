@@ -63,7 +63,7 @@ spec:
     - name: runcoffea-template
       script:
         image: gitlab-registry.cern.ch/cms-cloud/python-vnc:latest
-        command: [bash, /mnt/vol/commands.sh]
+        command: [bash, /mnt/vol/code/commands.sh]
         volumeMounts:
         - name: task-pv-storage
           mountPath: /mnt/vol
