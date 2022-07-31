@@ -75,7 +75,8 @@ spec:
         image: cernopendata/cernopendata-client
         command: [bash]
         source: |
-          cernopendata-client get-file-locations --recid "{{inputs.parameters.recid}}" --protocol xrootd > /mnt/vol/files_{{inputs.parameters.recid}}.txt;
+          recid="{{inputs.parameters.recid}}"
+          cernopendata-client get-file-locations --recid $recid --protocol xrootd > /mnt/vol/files_{{inputs.parameters.recid}}.txt;
           nFiles="{{inputs.parameters.nFiles}}"
           echo $nFiles
           head -$nFiles /mnt/vol/files_{{inputs.parameters.recid}}.txt > cat /mnt/vol/data/step_files_{{inputs.parameters.recid}}.txt
