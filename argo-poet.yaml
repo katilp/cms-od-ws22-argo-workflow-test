@@ -22,7 +22,6 @@ spec:
         parameters:
           - name: nFiles
           - name: nSteps
-          - name: message
           - name: recid
       dag:
         tasks:
