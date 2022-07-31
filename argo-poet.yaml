@@ -96,7 +96,7 @@ spec:
         source: |
           sudo chown $USER /mnt/vol
           source /opt/cms/entrypoint.sh
-          git clone -b odws2022-ttbaljets-prod https://github.com/cms-opendata-analyses/PhysObjectExtractorTool.git
+          git clone -b odws2022-ttbaljets-prod https://github.com/katilp/PhysObjectExtractorTool.git
           cd PhysObjectExtractorTool/PhysObjectExtractor
           scram b
           echo "{{inputs.parameters.nFiles}}"
