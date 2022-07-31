@@ -65,6 +65,6 @@ spec:
         image: gitlab-registry.cern.ch/cms-cloud/python-vnc:latest
         command: [bash, /mnt/vol/commands.sh]
         volumeMounts:
-        - name: workdir
+        - name: task-pv-storage
           mountPath: /mnt/vol
                  
