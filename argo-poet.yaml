@@ -1,0 +1,84 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: poet-test-
+spec:
+  entrypoint: argo-poet
+  volumes:
+    - name: task-pv-storage
+      persistentVolumeClaim:
+        claimName: nfs-2
+  arguments:
+    parameters:
+      - name: nFiles
+        value: 10
+      - name: nSteps
+        value: 1
+      - name: message
+        value: "I am in this step"
+      - name: recid
+        value: 24119
+  templates:
+    - name: argo-poet
+      inputs:
+        parameters:
+          - name: nFiles
+          - name: nSteps
+          - name: message
+          - name: recid
+      dag:
+        tasks:
+          - name: prepare
+            template: prepare-template
+
+          - name: filelist
+            dependencies: [prepare]
+            template: filelist-template
+
+          - name: runpoet
+            dependencies: [filelist]
+            template: runpoet-template
+
+    # prepare the data directories needed in the workflow steps
+    - name: prepare-template
+      script:
+        image: ubuntu:latest
+        command: [bash]
+        source: |
+          mkdir -p /mnt/vol/data
+          mkdir -p /mnt/vol/code
+          chmod -R 777 /mnt/vol
+        volumeMounts:
+          - name: task-pv-storage
+            mountPath: /mnt/vol  
+
+    # get the full list of files and write the files to be processed to a file
+    - name: filelist-template
+      inputs:
+        parameters:
+          - name: nFiles
+          - name: nSteps
+          - name: recid
+      script:
+        image: cernopendata/cernopendata-client
+        command: [bash]
+        source: |
+          cernopendata-client get-file-locations --recid {{inputs.parameters.recid}} --protocol xrootd > /mnt/vol/files_{{inputs.parameters.recid}}.txt;
+          head -{{inputs.parameters.nFiles}} /mnt/vol/files_{{inputs.parameters.recid}}.txt > cat /mnt/vol/data/step_files_{{inputs.parameters.recid}}.txt
+          echo Selected files:
+          cat /mnt/vol/data/step_files_{{inputs.parameters.recid}}.txt
+        volumeMounts:
+          - name: task-pv-storage
+            mountPath: /mnt/vol
+
+    # prepare the data directories needed in the workflow steps
+    - name: runpoet-template
+      inputs:
+        parameters:
+        - name: message
+      script:
+        image: alpine:3.7
+        command: [echo, "{{inputs.parameters.message}}"]
+        volumeMounts:
+        - name: task-pv-storage
+          mountPath: /mnt/vol
