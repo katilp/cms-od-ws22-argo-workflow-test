@@ -64,7 +64,7 @@ spec:
       script:
         image: gitlab-registry.cern.ch/cms-cloud/python-vnc:latest
         command: [bash, /mnt/vol/commands.sh]
-      volumeMounts:
-      - name: workdir
-        mountPath: /mnt/vol
+        volumeMounts:
+        - name: workdir
+          mountPath: /mnt/vol
                  
