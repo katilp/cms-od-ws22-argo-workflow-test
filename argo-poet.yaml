@@ -76,6 +76,7 @@ spec:
         command: [bash]
         source: |
           recid="{{inputs.parameters.recid}}"
+          echo $recid
           cernopendata-client get-file-locations --recid $recid --protocol xrootd > /mnt/vol/files_{{inputs.parameters.recid}}.txt;
           nFiles="{{inputs.parameters.nFiles}}"
           echo $nFiles
