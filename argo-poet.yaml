@@ -101,10 +101,10 @@ spec:
           - name: task-pv-storage
             mountPath: /mnt/vol
       outputs:
-      parameters:
-      - name: num
-        valueFrom:
-          path: /tmp/num
+        parameters:
+        - name: num
+          valueFrom:
+            path: /tmp/num
 
 
     # get the full list of files 
