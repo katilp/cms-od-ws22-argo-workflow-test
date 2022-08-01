@@ -11,11 +11,27 @@ spec:
   arguments:
     parameters:
       - name: nFiles
-        value: 10
+        value: 2
       - name: nSteps
         value: 1
       - name: recid
-        value: 24119
+        value: |
+          [
+            {"recid": 24119},
+            {"recid": 24120},
+            {"recid": 19980},
+            {"recid": 19983},
+            {"recid": 19985},
+            {"recid": 19949},
+            {"recid": 19999},
+            {"recid": 19397},
+            {"recid": 19407},
+            {"recid": 19419},
+            {"recid": 19412},
+            {"recid": 20548}
+          ] 
+      - name: nJobs
+        value: 1       
   templates:
     - name: argo-poet
       inputs:
@@ -38,7 +54,8 @@ spec:
                 - name: nSteps
                   value: "{{inputs.parameters.nSteps}}"
                 - name: recid
-                  value: "{{inputs.parameters.recid}}"
+                  value: "{{item.recid}}"
+            withParam: "{{inputs.parameters.recid}}"
 
           - name: runpoet
             dependencies: [filelist]
@@ -47,8 +64,11 @@ spec:
               parameters:
                 - name: nFiles
                   value: "{{inputs.parameters.nFiles}}"
+                - name: nJobs
+                  value: "{{inputs.parameters.nJobs}}"
                 - name: recid
-                  value: "{{inputs.parameters.recid}}" 
+                  value: "{{item.recid}}"
+            withParam: "{{inputs.parameters.recid}}"                  
 
     # prepare the data directories needed in the workflow steps
     - name: prepare-template
@@ -63,33 +83,27 @@ spec:
           - name: task-pv-storage
             mountPath: /mnt/vol  
 
-    # get the full list of files and write the files to be processed to a file
+    # get the full list of files 
     - name: filelist-template
       inputs:
         parameters:
-          - name: nFiles
-          - name: nSteps
           - name: recid
       script:
         image: cernopendata/cernopendata-client
         command: [bash]
         source: |
           cernopendata-client get-file-locations --recid "{{inputs.parameters.recid}}" --protocol xrootd > /mnt/vol/files_{{inputs.parameters.recid}}.txt;
-          nFiles="{{inputs.parameters.nFiles}}"
-          echo $nFiles
-          head -$nFiles /mnt/vol/files_{{inputs.parameters.recid}}.txt > /mnt/vol/data/step_files_{{inputs.parameters.recid}}.txt
-          echo Selected files:
-          cat /mnt/vol/data/step_files_{{inputs.parameters.recid}}.txt
         volumeMounts:
           - name: task-pv-storage
             mountPath: /mnt/vol
 
-    # prepare the data directories needed in the workflow steps
+    # run poet for a recid and n files as input
     - name: runpoet-template
       inputs:
         parameters:
         - name: recid
         - name: nFiles
+        - name: nJobs
       script:
         image: cmsopendata/cmssw_7_6_7-slc6_amd64_gcc493
         command: [bash]
@@ -101,7 +115,9 @@ spec:
           scram b
           echo "{{inputs.parameters.nFiles}}"
           echo "/mnt/vol/files_{{inputs.parameters.recid}}.txt"
-          cmsRun python/poet_cfg.py True "{{inputs.parameters.nFiles}}" 1 '"/mnt/vol/files_{{inputs.parameters.recid}}.txt"'
+          itJobs=$(( {{inputs.parameters.nJobs}} -1 ))
+          firstFile=$(( {{inputs.parameters.nFiles}}*$itJobs ))
+          cmsRun python/poet_cfg.py True "{{inputs.parameters.nFiles}}" 0 '"/mnt/vol/files_{{inputs.parameters.recid}}.txt"'
           mv myoutput.root /mnt/vol/output_{{inputs.parameters.recid}}.root
         volumeMounts:
         - name: task-pv-storage
