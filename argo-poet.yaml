@@ -16,16 +16,6 @@ spec:
         value: |
           [
             {"recid": 24119},
-            {"recid": 24120},
-            {"recid": 19980},
-            {"recid": 19983},
-            {"recid": 19985},
-            {"recid": 19949},
-            {"recid": 19999},
-            {"recid": 19397},
-            {"recid": 19407},
-            {"recid": 19419},
-            {"recid": 19412},
             {"recid": 20548}
           ] 
       - name: nJobs
@@ -47,15 +37,6 @@ spec:
             template: filelist-template
             arguments:
               parameters:
-                - name: recid
-                  value: "{{item.recid}}"
-            withParam: "{{inputs.parameters.recid}}"
-
-          - name: countevents
-            dependencies: [filelist] 
-            template: countevents-template
-            arguments:
-              parameters: 
                 - name: recid
                   value: "{{item.recid}}"
             withParam: "{{inputs.parameters.recid}}"
@@ -82,7 +63,16 @@ spec:
               parameters: 
                 - name: recid
                   value: "{{item.recid}}"
-            withParam: "{{inputs.parameters.recid}}"                           
+            withParam: "{{inputs.parameters.recid}}"     
+
+          - name: countevents
+            dependencies: [mergetrees] 
+            template: countevents-template
+            arguments:
+              parameters: 
+                - name: recid
+                  value: "{{item.recid}}"
+            withParam: "{{inputs.parameters.recid}}"                                
 
     # prepare the data directories needed in the workflow steps and the command file for the final step
     - name: prepare-template
@@ -92,6 +82,7 @@ spec:
         source: |
           mkdir -p /mnt/vol/data
           mkdir -p /mnt/vol/code
+          mkdir -p /mnt/vol/ouput
           chmod -R 777 /mnt/vol
           echo "pip install vector hist mplhep coffea" > /mnt/vol/code/commands.sh
           echo "git clone https://github.com/cms-opendata-workshop/workshop2022-lesson-ttbarljetsanalysis-payload.git" >> /mnt/vol/code/commands.sh
@@ -124,21 +115,6 @@ spec:
           valueFrom:
             path: /tmp/num
 
-    # count events
-    - name: countevents-template
-      inputs:
-        parameters:
-          - name: recid
-      script:
-        image: gitlab-registry.cern.ch/cms-cloud/python-vnc:latest
-        command: [bash]
-        source: |
-          echo Count events here
-        volumeMounts:
-          - name: task-pv-storage
-            mountPath: /mnt/vol
-
-
     # run poet for a recid and n files as input
     - name: runpoet-template
       inputs:
@@ -162,8 +138,7 @@ spec:
           firstFile=$(( {{inputs.parameters.nFiles}}*$itJobs ))
           cmsRun python/poet_cfg.py True "{{inputs.parameters.nFiles}}" $firstFile '"/mnt/vol/files_{{inputs.parameters.recid}}.txt"'
           cp scripts/merge_trees.py /mnt/vol/code
-          mkdir /mnt/vol/ouput
-          mkdir /mnt/vol/output/{{inputs.parameters.recid}}
+          mkdir -p /mnt/vol/output/{{inputs.parameters.recid}}
           mv myoutput.root /mnt/vol/output/{{inputs.parameters.recid}}/
         volumeMounts:
         - name: task-pv-storage
@@ -183,6 +158,20 @@ spec:
         command: [bash]
         source: |
           python /mnt/vol/code/merge_trees.py /mnt/vol/ouput/{{inputs.parameters.recid}}
+        volumeMounts:
+          - name: task-pv-storage
+            mountPath: /mnt/vol
+
+# count events
+    - name: countevents-template
+      inputs:
+        parameters:
+          - name: recid
+      script:
+        image: gitlab-registry.cern.ch/cms-cloud/python-vnc:latest
+        command: [bash]
+        source: |
+          echo Count events here
         volumeMounts:
           - name: task-pv-storage
             mountPath: /mnt/vol
