@@ -61,8 +61,9 @@ spec:
                 - name: nJobs
                   value: "{{inputs.parameters.nJobs}}"
                 - name: recid
-                  value: "{{item.recid}}"
-            withParam: "{{inputs.parameters.recid}}"                  
+                  value: "{{inputs.parameters.recid}}"
+#                  value: "{{item.recid}}"
+#            withParam: "{{inputs.parameters.recid}}"                  
 
     # prepare the data directories needed in the workflow steps
     - name: prepare-template
@@ -113,8 +114,8 @@ spec:
           echo "/mnt/vol/files_{{inputs.parameters.recid}}.txt"
           itJobs=$(( {{inputs.parameters.nJobs}} -1 ))
           firstFile=$(( {{inputs.parameters.nFiles}}*$itJobs ))
-          cmsRun python/poet_cfg.py True "{{inputs.parameters.nFiles}}" $firstFile '"/mnt/vol/files_{{inputs.parameters.recid}}.txt"'
-          mv myoutput.root /mnt/vol/output_{{inputs.parameters.recid}}.root
+#          cmsRun python/poet_cfg.py True "{{inputs.parameters.nFiles}}" $firstFile '"/mnt/vol/files_{{inputs.parameters.recid}}.txt"'
+#          mv myoutput.root /mnt/vol/output_{{inputs.parameters.recid}}.root
         volumeMounts:
         - name: task-pv-storage
           mountPath: /mnt/vol
