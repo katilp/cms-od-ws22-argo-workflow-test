@@ -115,7 +115,7 @@ spec:
           echo "/mnt/vol/files_{{inputs.parameters.recid}}.txt"
           itJobs=$(( {{inputs.parameters.nJobs}} -1 ))
           firstFile=$(( {{inputs.parameters.nFiles}}*$itJobs ))
-          cmsRun python/poet_cfg.py True "{{inputs.parameters.nFiles}}" 0 '"/mnt/vol/files_{{inputs.parameters.recid}}.txt"'
+          cmsRun python/poet_cfg.py True "{{inputs.parameters.nFiles}}" $firstFile '"/mnt/vol/files_{{inputs.parameters.recid}}.txt"'
           mv myoutput.root /mnt/vol/output_{{inputs.parameters.recid}}.root
         volumeMounts:
         - name: task-pv-storage
