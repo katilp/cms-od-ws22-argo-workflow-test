@@ -47,6 +47,9 @@ spec:
             template: filelist-template
             arguments:
               parameters:
+                - name: thisrecid
+                    valueFrom:
+                    default: "{{item.recid}}"   # Default value to use if retrieving valueFrom fails. If not provided workflow will fail instead
                 - name: recid
                   value: "{{item.recid}}"
             withParam: "{{inputs.parameters.recid}}"
@@ -61,8 +64,8 @@ spec:
                 - name: nJobs
                   value: "{{inputs.parameters.nJobs}}"
                 - name: recid
-                  value: "{{item.recid}}"
-            withParam: "{{inputs.parameters.recid}}"                  
+                  value: "{{steps.filelist.outputs.parameters.thisrecid}}"
+#            withParam: "{{inputs.parameters.recid}}"                  
 
     # prepare the data directories needed in the workflow steps
     - name: prepare-template
@@ -87,6 +90,7 @@ spec:
         command: [bash]
         source: |
           cernopendata-client get-file-locations --recid "{{inputs.parameters.recid}}" --protocol xrootd > /mnt/vol/files_{{inputs.parameters.recid}}.txt;
+          echo "{{inputs.parameters.recid}}"
         volumeMounts:
           - name: task-pv-storage
             mountPath: /mnt/vol
@@ -116,3 +120,7 @@ spec:
         volumeMounts:
         - name: task-pv-storage
           mountPath: /mnt/vol
+        resources:
+          requests:
+            memory: 1.7Gi
+            cpu: 750m
