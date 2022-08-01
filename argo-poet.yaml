@@ -66,9 +66,9 @@ spec:
                   value: "{{tasks.filelist.outputs.parameters.num}}"
             withParam: "{{inputs.parameters.recid}}"   
 
-          - name: mergetrees
+          - name: flattentrees
             dependencies: [runpoet]
-            template: mergetrees-template
+            template: flattentrees-template
             arguments:
               parameters: 
                 - name: recid
@@ -76,7 +76,7 @@ spec:
             withParam: "{{inputs.parameters.recid}}"     
 
           - name: countevents
-            dependencies: [mergetrees] 
+            dependencies: [flattentrees] 
             template: countevents-template
             arguments:
               parameters: 
@@ -159,7 +159,7 @@ spec:
             cpu: 750m
 
     # merge trees
-    - name: mergetrees-template
+    - name: flattentrees-template
       inputs:
         parameters:
           - name: recid
