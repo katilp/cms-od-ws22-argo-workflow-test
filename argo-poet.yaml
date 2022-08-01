@@ -53,7 +53,7 @@ spec:
 
           - name: countevents
             dependencies: [filelist] 
-            template: countevents_template
+            template: countevents-template
             arguments:
               parameters: 
                 - name: recid
