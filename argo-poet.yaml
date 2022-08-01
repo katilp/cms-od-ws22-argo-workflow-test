@@ -52,7 +52,7 @@ spec:
             withParam: "{{inputs.parameters.recid}}"
 
           - name: countevents
-            dependencied: [filelist] 
+            dependencies: [filelist] 
             template: countevents_template
             arguments:
               parameters: 
