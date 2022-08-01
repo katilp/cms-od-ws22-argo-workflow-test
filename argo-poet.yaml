@@ -87,6 +87,7 @@ spec:
       outputs:
         parameters:
           - name: thisrecid
+            value: "{{inputs.parameters.recid}}"
       script:
         image: cernopendata/cernopendata-client
         command: [bash]
