@@ -11,7 +11,7 @@ spec:
   arguments:
     parameters:
       - name: nFiles
-        value: 2
+        value: 1
       - name: recid
         value: |
           [
@@ -49,8 +49,6 @@ spec:
               parameters:
                 - name: recid
                   value: "{{item.recid}}"
-                - name: thisrecid
-                  value: "{{item.recid}}"
             withParam: "{{inputs.parameters.recid}}"
 
           - name: runpoet
@@ -63,8 +61,8 @@ spec:
                 - name: nJobs
                   value: "{{inputs.parameters.nJobs}}"
                 - name: recid
-                  value: "{{steps.filelist.outputs.parameters.thisrecid}}"
-#            withParam: "{{inputs.parameters.recid}}"                  
+                  value: "{{item.recid}}"
+            withParam: "{{inputs.parameters.recid}}"                  
 
     # prepare the data directories needed in the workflow steps
     - name: prepare-template
@@ -84,16 +82,12 @@ spec:
       inputs:
         parameters:
           - name: recid
-      outputs:
-        parameters:
-          - name: thisrecid
-            value: "{{inputs.parameters.recid}}"
       script:
         image: cernopendata/cernopendata-client
         command: [bash]
         source: |
           cernopendata-client get-file-locations --recid "{{inputs.parameters.recid}}" --protocol xrootd > /mnt/vol/files_{{inputs.parameters.recid}}.txt;
-          echo "{{inputs.parameters.recid}}"
+#          echo "{{inputs.parameters.recid}}" > /mnt/vol/thisrecid_{{inputs.parameters.recid}}.txt
         volumeMounts:
           - name: task-pv-storage
             mountPath: /mnt/vol
@@ -102,9 +96,9 @@ spec:
     - name: runpoet-template
       inputs:
         parameters:
-        - name: recid
         - name: nFiles
         - name: nJobs
+        - name: recid
       script:
         image: cmsopendata/cmssw_7_6_7-slc6_amd64_gcc493
         command: [bash]
@@ -115,6 +109,7 @@ spec:
           cd PhysObjectExtractorTool/PhysObjectExtractor
           scram b
           echo "{{inputs.parameters.nFiles}}"
+          recid=
           echo "/mnt/vol/files_{{inputs.parameters.recid}}.txt"
           itJobs=$(( {{inputs.parameters.nJobs}} -1 ))
           firstFile=$(( {{inputs.parameters.nFiles}}*$itJobs ))
