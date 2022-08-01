@@ -47,9 +47,6 @@ spec:
             template: filelist-template
             arguments:
               parameters:
-                - name: thisrecid
-                  valueFrom:
-                    default: "{{item.recid}}"   # Default value to use if retrieving valueFrom fails. If not provided workflow will fail instead
                 - name: recid
                   value: "{{item.recid}}"
             withParam: "{{inputs.parameters.recid}}"
@@ -85,6 +82,9 @@ spec:
       inputs:
         parameters:
           - name: recid
+      ouputs:
+        parameters:
+          - name: thisrecid
       script:
         image: cernopendata/cernopendata-client
         command: [bash]
