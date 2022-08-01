@@ -48,7 +48,7 @@ spec:
             arguments:
               parameters:
                 - name: thisrecid
-                    valueFrom:
+                  valueFrom:
                     default: "{{item.recid}}"   # Default value to use if retrieving valueFrom fails. If not provided workflow will fail instead
                 - name: recid
                   value: "{{item.recid}}"
