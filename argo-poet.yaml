@@ -51,6 +51,15 @@ spec:
                   value: "{{item.recid}}"
             withParam: "{{inputs.parameters.recid}}"
 
+          - name: readoutput
+            dependencies: [filelist]
+            template: readoutput-template
+            arguments:
+              parameters:
+              - name: num
+                value: "{{item.num}}"
+            withParam: "{{tasks.filelist.outputs.parameters}}"
+
           - name: runpoet
             dependencies: [filelist]
             template: runpoet-template
@@ -87,7 +96,27 @@ spec:
         command: [bash]
         source: |
           cernopendata-client get-file-locations --recid "{{inputs.parameters.recid}}" --protocol xrootd > /mnt/vol/files_{{inputs.parameters.recid}}.txt;
-#          echo "{{inputs.parameters.recid}}" > /mnt/vol/thisrecid_{{inputs.parameters.recid}}.txt
+          echo "{{inputs.parameters.recid}}" > /tmp/num
+        volumeMounts:
+          - name: task-pv-storage
+            mountPath: /mnt/vol
+      outputs:
+      parameters:
+      - name: num
+        valueFrom:
+          path: /tmp/num
+
+
+    # get the full list of files 
+    - name: readoutput-template
+      inputs:
+        parameters:
+          - name: num
+      script:
+        image: alpine:latest
+        command: [sh, -c]
+        source: |
+           echo "{{inputs.parameters.num}}"
         volumeMounts:
           - name: task-pv-storage
             mountPath: /mnt/vol
