@@ -85,15 +85,12 @@ spec:
       outputs:
         parameters:
           - name: thisrecid
-            valueFrom: 
-              default: 00000
-              path: /mnt/vol/thisrecid_{{inputs.parameters.recid}}
       script:
         image: cernopendata/cernopendata-client
         command: [bash]
         source: |
           cernopendata-client get-file-locations --recid "{{inputs.parameters.recid}}" --protocol xrootd > /mnt/vol/files_{{inputs.parameters.recid}}.txt;
-          echo "{{inputs.parameters.recid}}" > /mnt/vol/thisrecid_{{inputs.parameters.recid}}
+          echo "{{inputs.parameters.recid}}"
         volumeMounts:
           - name: task-pv-storage
             mountPath: /mnt/vol
