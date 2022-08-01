@@ -87,7 +87,6 @@ spec:
           - name: thisrecid
             valueFrom: 
               default: 00000
-              parameter: "{{inputs.parameters.recid}}"
               path: /mnt/vol/thisrecid_{{inputs.parameters.recid}}
       script:
         image: cernopendata/cernopendata-client
