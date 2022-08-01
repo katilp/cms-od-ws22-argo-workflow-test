@@ -11,11 +11,21 @@ spec:
   arguments:
     parameters:
       - name: nFiles
-        value: 1
+        value: 2
       - name: recid
         value: |
           [
             {"recid": 24119},
+            {"recid": 24120},
+            {"recid": 19980},
+            {"recid": 19983},
+            {"recid": 19985},
+            {"recid": 19949},
+            {"recid": 19999},
+            {"recid": 19397},
+            {"recid": 19407},
+            {"recid": 19419},
+            {"recid": 19412},
             {"recid": 20548}
           ] 
       - name: nJobs
