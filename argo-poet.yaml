@@ -12,8 +12,6 @@ spec:
     parameters:
       - name: nFiles
         value: 2
-      - name: nSteps
-        value: 1
       - name: recid
         value: |
           [
