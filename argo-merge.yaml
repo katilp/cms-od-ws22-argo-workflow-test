@@ -47,6 +47,8 @@ spec:
         source: |
           echo "-l /mnt/vol/output/{{inputs.parameters.recid}}/:"
           ls -l /mnt/vol/output/{{inputs.parameters.recid}}/
+          chmod 777 /mnt/vol/output/{{inputs.parameters.recid}}
+          chmod 777 /mnt/vol/output/{{inputs.parameters.recid}}/myoutput.root
           echo "Going to run: python /mnt/vol/code/merge_trees.py /mnt/vol/output/{{inputs.parameters.recid}}/"
           python /mnt/vol/code/merge_trees.py /mnt/vol/output/{{inputs.parameters.recid}}/
         volumeMounts:
