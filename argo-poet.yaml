@@ -49,6 +49,8 @@ spec:
               parameters:
                 - name: recid
                   value: "{{item.recid}}"
+                - name: thisrecid
+                  value: "{{item.recid}}"
             withParam: "{{inputs.parameters.recid}}"
 
           - name: runpoet
