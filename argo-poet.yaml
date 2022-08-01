@@ -37,7 +37,7 @@ spec:
       inputs:
         parameters:
           - name: nFiles
-          - name: nSteps
+          - name: nJobs
           - name: recid
       dag:
         tasks:
@@ -49,11 +49,6 @@ spec:
             template: filelist-template
             arguments:
               parameters:
-                - name: nFiles
-                  value: "{{inputs.parameters.nFiles}}"
-                - name: nSteps
-                  value: "{{inputs.parameters.nSteps}}"
-                - name: recid
                   value: "{{item.recid}}"
             withParam: "{{inputs.parameters.recid}}"
 
