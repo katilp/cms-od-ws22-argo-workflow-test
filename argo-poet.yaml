@@ -82,9 +82,11 @@ spec:
       inputs:
         parameters:
           - name: recid
-      ouputs:
+      outputs:
         parameters:
           - name: thisrecid
+            valueFrom: 
+              default: "{{inputs.parameters.recid}}"
       script:
         image: cernopendata/cernopendata-client
         command: [bash]
