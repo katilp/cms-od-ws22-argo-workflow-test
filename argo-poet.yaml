@@ -101,7 +101,7 @@ spec:
           scram b
           echo "{{inputs.parameters.nFiles}}"
           echo "/mnt/vol/files_{{inputs.parameters.recid}}.txt"
-          cmsRun python/poet_cfg.py True "{{inputs.parameters.nFiles}}" 1 "/mnt/vol/files_{{inputs.parameters.recid}}.txt"
+          cmsRun python/poet_cfg.py True "{{inputs.parameters.nFiles}}" 1 '"/mnt/vol/files_{{inputs.parameters.recid}}.txt"''
           mv myoutput.root /mnt/vol/output_{{inputs.parameters.recid}}.root
         volumeMounts:
         - name: task-pv-storage
