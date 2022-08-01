@@ -15,8 +15,7 @@ spec:
       - name: recid
         value: |
           [
-            {"recid": 24119},
-            {"recid": 20548}
+            {"recid": 24119}
           ] 
       - name: nJobs
         value: 1       
@@ -46,9 +45,9 @@ spec:
         image: gitlab-registry.cern.ch/cms-cloud/python-vnc:latest
         command: [bash]
         source: |
-          ls -l /mnt/vol
-          ls -l /mnt/vol/output
+          echo "-l /mnt/vol/output/{{inputs.parameters.recid}}/:""
           ls -l /mnt/vol/output/{{inputs.parameters.recid}}/
+          echo "Going to run: python /mnt/vol/code/merge_trees.py /mnt/vol/output/{{inputs.parameters.recid}}/"
           python /mnt/vol/code/merge_trees.py /mnt/vol/output/{{inputs.parameters.recid}}/
         volumeMounts:
           - name: task-pv-storage
