@@ -157,7 +157,7 @@ spec:
         image: gitlab-registry.cern.ch/cms-cloud/python-vnc:latest
         command: [bash]
         source: |
-          python /mnt/vol/code/merge_trees.py /mnt/vol/ouput/{{inputs.parameters.recid}}
+          python /mnt/vol/code/merge_trees.py /mnt/vol/output/{{inputs.parameters.recid}}/myoutput.root
         volumeMounts:
           - name: task-pv-storage
             mountPath: /mnt/vol
