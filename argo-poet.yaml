@@ -136,7 +136,7 @@ spec:
           source /opt/cms/entrypoint.sh
           git clone -b odws2022-ttbaljets-prod https://github.com/katilp/PhysObjectExtractorTool.git
           cd PhysObjectExtractorTool/PhysObjectExtractor
-#          scram b
+          scram b
           echo "{{inputs.parameters.nFiles}}"
           recid=
           echo "/mnt/vol/files_{{inputs.parameters.recid}}.txt"
