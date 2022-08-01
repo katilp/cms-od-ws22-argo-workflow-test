@@ -30,12 +30,12 @@ spec:
       dag:
         tasks:
           - name: mergetrees
-              template: mergetrees-template
-              arguments:
-                parameters: 
-                  - name: recid
-                    value: "{{item.recid}}"
-              withParam: "{{inputs.parameters.recid}}"
+            template: mergetrees-template
+            arguments:
+              parameters: 
+                - name: recid
+                  value: "{{item.recid}}"
+            withParam: "{{inputs.parameters.recid}}"
 
     # merge trees
     - name: mergetrees-template
