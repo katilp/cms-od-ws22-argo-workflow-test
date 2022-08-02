@@ -153,6 +153,7 @@ spec:
           lastFile=$(( firstFile + {{inputs.parameters.nFiles}} ))
           cmsRun python/poet_cfg.py $isData $lastFile $firstFile '"/mnt/vol/files_{{inputs.parameters.recid}}.txt"'
           tot=0
+          firstFile=$(( $firstFile + 1 ))
           for ((i = $firstFile ; i <= $lastFile ; i++));
           do
             file=$(sed "${i}q;d" /mnt/vol/files_{{inputs.parameters.recid}}.txt);
@@ -161,17 +162,10 @@ spec:
             tot=$(( tot + nevents ))
             echo $tot
           done
-          echo 
+          echo $recid $tot /mnt/vol/output/$recid/myouput_merged.root >> /mnt/vol/nevents/nevents_recid.txt 
           cp scripts/merge_trees.py /mnt/vol/code
-          mkdir -p /mnt/vol/output/{{inputs.parameters.recid}}
-          mv myoutput.root /mnt/vol/output/{{inputs.parameters.recid}}/
-          firstFile=$(( $firstFile + 1 ))
-          for ((i = $firstFile ; i <= $lastFile ; i++)); 
-          do  
-            file=$(sed "${i}q;d" test_edm_output.log); 
-            nevents=$()
-          done
-          echo $recid $tot /mnt/vol/output/$recid/myouput_merged.root >> /mnt/vol/nevents/nevents_recid.txt  
+          mkdir -p /mnt/vol/output/{{inputs.parameters.recid}}            
+          mv myoutput.root /mnt/vol/output/{{inputs.parameters.recid}}/   # to be modified for nJobs > 1
         volumeMounts:
         - name: task-pv-storage
           mountPath: /mnt/vol
