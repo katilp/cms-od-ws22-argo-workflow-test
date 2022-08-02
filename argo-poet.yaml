@@ -106,7 +106,6 @@ spec:
           echo "cp /mnt/vol/code/ntuples.json ." >> /mnt/vol/code/commands.sh
           echo "python coffeaAnalysis_ttbarljets.py" >> /mnt/vol/code/commands.sh
           echo "mv *root /mnt/vol" >> /mnt/vol/code/commands.sh
-          echo "mv *png /mnt/vol" >> /mnt/vol/code/commands.sh
           cat /mnt/vol/code/commands.sh
         volumeMounts:
           - name: task-pv-storage
