@@ -45,7 +45,7 @@ spec:
         command: [bash]
         source: |
           git clone https://github.com/SolenoiData/cms-workshop2022.git
-          cd SolenoiData
+          cd cms-workshop2022
           cp /mnt/vol/nevents/nevents_recid.txt .
           python ntuples-gen.py
           cat ntuples.json
