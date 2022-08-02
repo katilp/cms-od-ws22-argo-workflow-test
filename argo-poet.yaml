@@ -167,7 +167,7 @@ spec:
             tot=$(( tot + nevents ))
             echo $tot
           done
-          echo $recid $tot /mnt/vol/output/$recid/myouput_merged.root >> /mnt/vol/nevents/nevts_recid.txt 
+          echo $recid $tot /mnt/vol/output/$recid/myoutput_merged.root >> /mnt/vol/nevents/nevts_recid.txt 
           cp scripts/merge_trees.py /mnt/vol/code
           mkdir -p /mnt/vol/output/{{inputs.parameters.recid}}            
           mv myoutput.root /mnt/vol/output/{{inputs.parameters.recid}}/   # to be modified for nJobs > 1
