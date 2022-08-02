@@ -35,6 +35,10 @@ spec:
                 - name: recid
                   value: "{{inputs.parameters.recid}}"
 
+          - name: runcoffea
+            dependencies: [preparecoffea]
+            template: runcoffea-template
+
    # prepare coffea input
     - name: preparecoffea-template
       inputs:
