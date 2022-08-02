@@ -52,6 +52,7 @@ spec:
           echo "git clone https://github.com/cms-opendata-workshop/workshop2022-lesson-ttbarljetsanalysis-payload.git" >> /mnt/vol/code/commands.sh
           echo "cd workshop2022-lesson-ttbarljetsanalysis-payload" >> /mnt/vol/code/commands.sh
           echo "cp /mnt/vol/code/ntuples.json ." >> /mnt/vol/code/commands.sh
+          echo "cat ntuples.json" >> /mnt/vol/code/commands.sh
           echo "python coffeaAnalysis_ttbarljets.py" >> /mnt/vol/code/commands.sh
           echo "mv *root /mnt/vol" >> /mnt/vol/code/commands.sh
           echo "mv *png /mnt/vol" >> /mnt/vol/code/commands.sh
