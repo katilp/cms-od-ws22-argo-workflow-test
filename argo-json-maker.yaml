@@ -1,0 +1,54 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: poet-test-
+spec:
+  entrypoint: argo-poet
+  volumes:
+    - name: task-pv-storage
+      persistentVolumeClaim:
+        claimName: nfs-2
+  arguments:
+    parameters:
+      - name: nFiles
+        value: 1
+      - name: recid
+        value: |
+          [
+            {"recid": 24119}
+          ] 
+      - name: nJobs
+        value: 1       
+  templates:
+    - name: argo-poet
+      inputs:
+        parameters:
+          - name: nFiles
+          - name: nJobs
+          - name: recid
+      dag:
+        tasks:
+          - name: preparecoffea
+            template: preparecoffea-template
+            arguments:
+              parameters: 
+                - name: recid
+                  value: "{{inputs.parameters.recid}}"
+
+   # prepare coffea input
+    - name: preparecoffea-template
+      inputs:
+        parameters:
+          - name: recid
+      script:
+        image: gitlab-registry.cern.ch/cms-cloud/python-vnc:latest
+        command: [bash]
+        source: |
+          git clone https://github.com/SolenoiData/cms-workshop2022.git
+          cp /mnt/vol/nevents/nevents_recid.txt .
+          python ntuples-gen.py
+          cat ntuples.json
+          mv ntuples.json /mnt/vol/code
+        volumeMounts:
+          - name: task-pv-storage
+            mountPath: /mnt/vol            

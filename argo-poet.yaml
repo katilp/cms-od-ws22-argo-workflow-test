@@ -73,16 +73,16 @@ spec:
               parameters: 
                 - name: recid
                   value: "{{item.recid}}"
-            withParam: "{{inputs.parameters.recid}}"     
+            withParam: "{{inputs.parameters.recid}}" 
 
-          - name: countevents
-            dependencies: [flattentrees] 
-            template: countevents-template
+          - name: preparecoffea
+            dependencies: [flattentrees]
+            template: preparecoffea-template
             arguments:
               parameters: 
                 - name: recid
-                  value: "{{item.recid}}"
-            withParam: "{{inputs.parameters.recid}}"                                
+                  value: "{{inputs.parameters.recid}}"
+                               
 
     # prepare the data directories needed in the workflow steps and the command file for the final step
     - name: prepare-template
@@ -174,7 +174,7 @@ spec:
             memory: 1.7Gi
             cpu: 750m
 
-    # merge trees
+    # flatten trees
     - name: flattentrees-template
       inputs:
         parameters:
@@ -188,8 +188,9 @@ spec:
           - name: task-pv-storage
             mountPath: /mnt/vol
 
-# count events
-    - name: countevents-template
+
+    # prepare coffea input
+    - name: preparecoffea-template
       inputs:
         parameters:
           - name: recid
@@ -197,7 +198,12 @@ spec:
         image: gitlab-registry.cern.ch/cms-cloud/python-vnc:latest
         command: [bash]
         source: |
-          echo Count events here
+          git clone https://github.com/SolenoiData/cms-workshop2022.git
+          cp /mnt/vol/nevents/nevents_recid.txt .
+          python ntuples-gen.py
+          cat ntuples.json
+          mv ntuples.json /mnt/vol/code
         volumeMounts:
           - name: task-pv-storage
-            mountPath: /mnt/vol
+            mountPath: /mnt/vol            
+
