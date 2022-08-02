@@ -93,6 +93,8 @@ spec:
           mkdir -p /mnt/vol/data
           mkdir -p /mnt/vol/code
           mkdir -p /mnt/vol/output
+          mkdir -p /mnt/vol/nevents
+          rm -f /mnt/vol/nevents/*
           chmod -R 777 /mnt/vol
           echo "pip install vector hist mplhep coffea" > /mnt/vol/code/commands.sh
           echo "git clone https://github.com/cms-opendata-workshop/workshop2022-lesson-ttbarljetsanalysis-payload.git" >> /mnt/vol/code/commands.sh
@@ -142,14 +144,34 @@ spec:
           cd PhysObjectExtractorTool/PhysObjectExtractor
           scram b
           echo "{{inputs.parameters.nFiles}}"
-          recid=
+          recid="{{inputs.parameters.recid}}"
           echo "/mnt/vol/files_{{inputs.parameters.recid}}.txt"
+          isData=False
+          if [[ $recid -eq 24119 ]] || [[ $recid -eq 24120 ]]; then isData=True; fi
           itJobs=$(( {{inputs.parameters.nJobs}} -1 ))
           firstFile=$(( {{inputs.parameters.nFiles}}*$itJobs ))
-          cmsRun python/poet_cfg.py True "{{inputs.parameters.nFiles}}" $firstFile '"/mnt/vol/files_{{inputs.parameters.recid}}.txt"'
+          lastFile=$(( firstFile + {{inputs.parameters.nFiles}} ))
+          cmsRun python/poet_cfg.py $isData $lastFile $firstFile '"/mnt/vol/files_{{inputs.parameters.recid}}.txt"'
+          tot=0
+          for ((i = $firstFile ; i <= $lastFile ; i++));
+          do
+            file=$(sed "${i}q;d" /mnt/vol/files_{{inputs.parameters.recid}}.txt);
+            nevents=$(edmEventSize -v $file | grep Events |  awk '{print $NF}')
+            echo $nevents
+            tot=$(( tot + nevents ))
+            echo $tot
+          done
+          echo 
           cp scripts/merge_trees.py /mnt/vol/code
           mkdir -p /mnt/vol/output/{{inputs.parameters.recid}}
           mv myoutput.root /mnt/vol/output/{{inputs.parameters.recid}}/
+          firstFile=$(( $firstFile + 1 ))
+          for ((i = $firstFile ; i <= $lastFile ; i++)); 
+          do  
+            file=$(sed "${i}q;d" test_edm_output.log); 
+            nevents=$()
+          done
+          echo $recid $tot /mnt/vol/output/$recid/myouput_merged.root >> /mnt/vol/nevents/nevents_recid.txt  
         volumeMounts:
         - name: task-pv-storage
           mountPath: /mnt/vol
