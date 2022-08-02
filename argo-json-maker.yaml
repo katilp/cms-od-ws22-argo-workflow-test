@@ -46,7 +46,7 @@ spec:
         source: |
           git clone https://github.com/SolenoiData/cms-workshop2022.git
           cd cms-workshop2022
-          cp /mnt/vol/nevents/nevents_recid.txt .
+          cp /mnt/vol/nevents/nevts_recid.txt .
           python ntuples-gen.py
           cat ntuples.json
           mv ntuples.json /mnt/vol/code
