@@ -82,6 +82,10 @@ spec:
               parameters: 
                 - name: recid
                   value: "{{inputs.parameters.recid}}"
+
+          - name: runcoffea
+            dependencies: [preparecoffea]
+            template: runcoffea-template
                                
 
     # prepare the data directories needed in the workflow steps and the command file for the final step
@@ -99,6 +103,7 @@ spec:
           echo "pip install vector hist mplhep coffea" > /mnt/vol/code/commands.sh
           echo "git clone https://github.com/cms-opendata-workshop/workshop2022-lesson-ttbarljetsanalysis-payload.git" >> /mnt/vol/code/commands.sh
           echo "cd workshop2022-lesson-ttbarljetsanalysis-payload" >> /mnt/vol/code/commands.sh
+          echo "cp /mnt/vol/code/ntuples.json ." >> /mnt/vol/code/commands.sh
           echo "python coffeaAnalysis_ttbarljets.py" >> /mnt/vol/code/commands.sh
           echo "mv *root /mnt/vol" >> /mnt/vol/code/commands.sh
           echo "mv *png /mnt/vol" >> /mnt/vol/code/commands.sh
@@ -206,5 +211,14 @@ spec:
           mv ntuples.json /mnt/vol/code
         volumeMounts:
           - name: task-pv-storage
-            mountPath: /mnt/vol            
+            mountPath: /mnt/vol  
+
+    # run coffea on the produced files
+    - name: runcoffea-template
+      script:
+        image: gitlab-registry.cern.ch/cms-cloud/python-vnc:latest
+        command: [bash, /mnt/vol/code/commands.sh]
+        volumeMounts:
+        - name: task-pv-storage
+          mountPath: /mnt/vol          
 
