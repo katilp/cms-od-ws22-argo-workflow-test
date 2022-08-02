@@ -53,6 +53,7 @@ spec:
           echo "cd workshop2022-lesson-ttbarljetsanalysis-payload" >> /mnt/vol/code/commands.sh
           echo "cp /mnt/vol/code/ntuples.json ." >> /mnt/vol/code/commands.sh
           echo "sed -i 's/file/files/g' ntuples.json" >> /mnt/vol/code/commands.sh
+          echo "sed -i 's/nevents/nevts/g' ntuples.json" >> /mnt/vol/code/commands.sh
           echo "python coffeaAnalysis_ttbarljets.py" >> /mnt/vol/code/commands.sh
           echo "mv *root /mnt/vol" >> /mnt/vol/code/commands.sh
           echo "mv *png /mnt/vol" >> /mnt/vol/code/commands.sh
