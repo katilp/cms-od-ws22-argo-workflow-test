@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  generateName: poet-test-
+  generateName: poet-ttbar-
 spec:
   entrypoint: argo-poet
   volumes:
@@ -136,7 +136,7 @@ spec:
         source: |
           sudo chown $USER /mnt/vol
           source /opt/cms/entrypoint.sh
-          git clone -b odws2022-ttbaljets-prod https://github.com/katilp/PhysObjectExtractorTool.git
+          git clone -b odws2022-ttbaljets-prod https://github.com/cms-opendata-analyses/PhysObjectExtractorTool.git
           cd PhysObjectExtractorTool/PhysObjectExtractor
           scram b
           echo "{{inputs.parameters.nFiles}}"
@@ -146,7 +146,7 @@ spec:
           itJobs=$(( {{inputs.parameters.nJobs}} -1 ))
           firstFile=$(( {{inputs.parameters.nFiles}}*$itJobs ))
           lastFile=$(( firstFile + {{inputs.parameters.nFiles}} ))
-          cmsRun python/poet_cfg.py $isData $lastFile $firstFile '"/mnt/vol/files_{{inputs.parameters.recid}}.txt"'
+          cmsRun python/poet_cfg_cloud.py $isData $lastFile $firstFile '"/mnt/vol/files_{{inputs.parameters.recid}}.txt"'
           tot=0
           firstFile=$(( $firstFile + 1 ))
           for ((i = $firstFile ; i <= $lastFile ; i++));
@@ -158,7 +158,6 @@ spec:
             echo $tot
           done
           echo $recid $tot /mnt/vol/output/$recid/myoutput_merged.root >> /mnt/vol/nevents/nevts_recid.txt 
-          cp scripts/merge_trees.py /mnt/vol/code
           mkdir -p /mnt/vol/output/{{inputs.parameters.recid}}            
           mv myoutput.root /mnt/vol/output/{{inputs.parameters.recid}}/   # to be modified for nJobs > 1
         volumeMounts:
@@ -178,7 +177,8 @@ spec:
         image: gitlab-registry.cern.ch/cms-cloud/python-vnc:latest
         command: [bash]
         source: |
-          python /mnt/vol/code/merge_trees.py /mnt/vol/output/{{inputs.parameters.recid}}/myoutput.root
+          wget https://github.com/cms-opendata-analyses/PhysObjectExtractorTool/blob/odws2022-ttbaljets-prod/PhysObjectExtractor/scripts/merge_trees.py
+          python merge_trees.py /mnt/vol/output/{{inputs.parameters.recid}}/myoutput.root
         volumeMounts:
           - name: task-pv-storage
             mountPath: /mnt/vol
@@ -193,8 +193,7 @@ spec:
         image: gitlab-registry.cern.ch/cms-cloud/python-vnc:latest
         command: [bash]
         source: |
-          git clone https://github.com/SolenoiData/cms-workshop2022.git
-          cd cms-workshop2022
+          wget https://github.com/cms-opendata-analyses/PhysObjectExtractorTool/blob/odws2022-ttbaljets-prod/PhysObjectExtractor/scripts/ntuple-gen.py
           cp /mnt/vol/nevents/nevts_recid.txt .
           python ntuples-gen.py
           cat ntuples.json
