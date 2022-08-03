@@ -62,6 +62,8 @@ spec:
                   value: "{{inputs.parameters.nJobs}}"
                 - name: recid
                   value: "{{item.recid}}"
+                - name: num
+                  value: "{{tasks.filelist.outputs.parameters.num}}"
             withParam: "{{inputs.parameters.recid}}"   
 
           - name: flattentrees
@@ -119,11 +121,17 @@ spec:
         command: [bash]
         source: |
           cernopendata-client get-file-locations --recid "{{inputs.parameters.recid}}" --protocol xrootd > /mnt/vol/files_{{inputs.parameters.recid}}.txt;
+          echo "{{inputs.parameters.recid}}" > /tmp/num 
         volumeMounts:
           - name: task-pv-storage
             mountPath: /mnt/vol
+      outputs:
+        parameters:
+        - name: num
+          valueFrom:
+            path: /tmp/num
 
-    # run poet for a recid and n files as input, count the events
+    # run poet for a recid and n files as input
     - name: runpoet-template
       inputs:
         parameters:
@@ -141,6 +149,7 @@ spec:
           scram b
           echo "{{inputs.parameters.nFiles}}"
           recid="{{inputs.parameters.recid}}"
+          echo "/mnt/vol/files_{{inputs.parameters.recid}}.txt"
           isData=False
           if [[ $recid -eq 24119 ]] || [[ $recid -eq 24120 ]]; then isData=True; fi
           itJobs=$(( {{inputs.parameters.nJobs}} -1 ))
@@ -210,5 +219,4 @@ spec:
         command: [bash, /mnt/vol/code/commands.sh]
         volumeMounts:
         - name: task-pv-storage
-          mountPath: /mnt/vol          
-
+          mountPath: /mnt/vol     
